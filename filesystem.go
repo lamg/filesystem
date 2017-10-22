@@ -21,6 +21,7 @@ type File interface {
 	io.Reader
 	io.ReaderAt
 	io.Seeker
+	io.Writer
 	Stat() (os.FileInfo, error)
 }
 
@@ -69,6 +70,17 @@ func (b *BufferFS) Open(name string) (f File, e error) {
 	f, ok = b.bfs[name]
 	if !ok {
 		e = fmt.Errorf("Not found file %s", name)
+	}
+	return
+}
+
+// GetBuffer gets the underlying
+func (b *BufferFS) GetBuffer(n string) (bf *bytes.Buffer,
+	ok bool) {
+	var f *BFile
+	f, ok = b.bfs[n]
+	if ok {
+		bf = f.Buffer
 	}
 	return
 }
