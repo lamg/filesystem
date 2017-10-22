@@ -88,6 +88,7 @@ func (b *BufferFS) GetBuffer(n string) (bf *bytes.Buffer,
 // Create creates a new file in memory
 func (b *BufferFS) Create(name string) (f File, e error) {
 	b.bfs[name] = NewBFile()
+	f = b.bfs[name]
 	return
 }
 
