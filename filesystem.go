@@ -12,6 +12,7 @@ type FileSystem interface {
 	Open(string) (File, error)
 	Stat(string) (os.FileInfo, error)
 	Create(string) (File, error)
+	Rename(string, string) error
 }
 
 // File abstracts a file system file
@@ -30,6 +31,12 @@ type OSFS struct {
 // Open opens a file
 func (fs *OSFS) Open(name string) (f File, e error) {
 	f, e = os.Open(name)
+	return
+}
+
+// Rename renames a file
+func (fs *OSFS) Rename(old, new string) (e error) {
+	e = os.Rename(old, new)
 	return
 }
 
@@ -69,6 +76,18 @@ func (b *BufferFS) Open(name string) (f File, e error) {
 // Create creates a new file in memory
 func (b *BufferFS) Create(name string) (f File, e error) {
 	b.bfs[name] = NewBFile()
+	return
+}
+
+// Rename renames a file
+func (b *BufferFS) Rename(old, new string) (e error) {
+	f, ok := b.bfs[old]
+	if ok {
+		delete(b.bfs, old)
+		b.bfs[new] = f
+	} else {
+		e = fmt.Errorf("File %s doesn't exists", old)
+	}
 	return
 }
 
