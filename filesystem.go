@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"os"
 )
 
@@ -13,6 +14,7 @@ type FileSystem interface {
 	Stat(string) (os.FileInfo, error)
 	Create(string) (File, error)
 	Rename(string, string) error
+	ReadFile(string) ([]byte, error)
 }
 
 // File abstracts a file system file
@@ -32,6 +34,12 @@ type OSFS struct {
 // Open opens a file
 func (fs *OSFS) Open(name string) (f File, e error) {
 	f, e = os.Open(name)
+	return
+}
+
+// ReadFile reads the content of a file
+func (fs *OSFS) ReadFile(name string) (bs []byte, e error) {
+	bs, e = ioutil.ReadFile(name)
 	return
 }
 
@@ -70,6 +78,17 @@ func (b *BufferFS) Open(name string) (f File, e error) {
 	f, ok = b.bfs[name]
 	if !ok {
 		e = fmt.Errorf("Not found file %s", name)
+	}
+	return
+}
+
+// ReadFile reads the contents of a file
+func (b *BufferFS) ReadFile(name string) (bs []byte, e error) {
+	f, ok := b.bfs[name]
+	if ok {
+		bs = f.Bytes()
+	} else {
+		e = fmt.Errorf("File %s doesn't exists", name)
 	}
 	return
 }
