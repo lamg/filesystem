@@ -106,7 +106,7 @@ func (b *BufferFS) GetBuffer(n string) (bf *bytes.Buffer,
 
 // Create creates a new file in memory
 func (b *BufferFS) Create(name string) (f File, e error) {
-	b.Bfs[name] = NewBFile()
+	b.Bfs[name] = NewBFile("")
 	f = b.Bfs[name]
 	return
 }
@@ -134,8 +134,8 @@ type BFile struct {
 }
 
 // NewBFile creates a new BFile
-func NewBFile() (b *BFile) {
-	b = &BFile{bytes.NewBufferString("")}
+func NewBFile(content string) (b *BFile) {
+	b = &BFile{bytes.NewBufferString(content)}
 	return
 }
 
