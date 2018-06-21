@@ -63,7 +63,7 @@ func (fs *OSFS) Create(name string) (f File, e error) {
 
 // BufferFS implements FileSystem using in memory buffers
 type BufferFS struct {
-	bfs map[string]*BFile
+	Bfs map[string]*BFile
 }
 
 // NewBufferFS creates a new BufferFS
@@ -75,7 +75,7 @@ func NewBufferFS() (b *BufferFS) {
 // Open creates a new file in memory
 func (b *BufferFS) Open(name string) (f File, e error) {
 	var ok bool
-	f, ok = b.bfs[name]
+	f, ok = b.Bfs[name]
 	if !ok {
 		e = fmt.Errorf("Not found file %s", name)
 	}
@@ -84,7 +84,7 @@ func (b *BufferFS) Open(name string) (f File, e error) {
 
 // ReadFile reads the contents of a file
 func (b *BufferFS) ReadFile(name string) (bs []byte, e error) {
-	f, ok := b.bfs[name]
+	f, ok := b.Bfs[name]
 	if ok {
 		bs = f.Bytes()
 	} else {
@@ -97,7 +97,7 @@ func (b *BufferFS) ReadFile(name string) (bs []byte, e error) {
 func (b *BufferFS) GetBuffer(n string) (bf *bytes.Buffer,
 	ok bool) {
 	var f *BFile
-	f, ok = b.bfs[n]
+	f, ok = b.Bfs[n]
 	if ok {
 		bf = f.Buffer
 	}
@@ -106,17 +106,17 @@ func (b *BufferFS) GetBuffer(n string) (bf *bytes.Buffer,
 
 // Create creates a new file in memory
 func (b *BufferFS) Create(name string) (f File, e error) {
-	b.bfs[name] = NewBFile()
-	f = b.bfs[name]
+	b.Bfs[name] = NewBFile()
+	f = b.Bfs[name]
 	return
 }
 
 // Rename renames a file
 func (b *BufferFS) Rename(old, new string) (e error) {
-	f, ok := b.bfs[old]
+	f, ok := b.Bfs[old]
 	if ok {
-		delete(b.bfs, old)
-		b.bfs[new] = f
+		delete(b.Bfs, old)
+		b.Bfs[new] = f
 	} else {
 		e = fmt.Errorf("File %s doesn't exists", old)
 	}
